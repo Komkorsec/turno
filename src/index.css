@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1e3a5f;
+  --color-primary-dark: #152b47;
+  --color-primary-light: #2a4f80;
+  --color-bg: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-text: #1a202c;
+  --color-text-muted: #718096;
+  --color-success: #38a169;
+  --color-warning: #d69e2e;
+  --color-danger: #e53e3e;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Prevent horizontal overflow during swipe-tab animations */
+html, body {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@keyframes slideInFromRight {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes slideInFromLeft {
+  from { transform: translateX(-40px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+.slide-in-from-right { animation: slideInFromRight 260ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+.slide-in-from-left  { animation: slideInFromLeft  260ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.animate-\[slideUp_0\.25s_ease-out\] { animation: slideUp 0.25s ease-out both; }
+
+* {
+  box-sizing: border-box;
+}
+
+/* Modalità testo grande — attivata via localStorage + classe su <html> */
+html.font-large  { font-size: 122%; }
+html.font-xlarge { font-size: 135%; }
+
+/* Forziamo la scala su tutte le classi di testo Tailwind — sia px fissi che rem */
+html.font-large  .text-\[9px\],
+html.font-xlarge .text-\[9px\]  { font-size: 0.60rem !important; }
+html.font-large  .text-\[10px\],
+html.font-xlarge .text-\[10px\] { font-size: 0.65rem !important; }
+html.font-large  .text-\[11px\],
+html.font-xlarge .text-\[11px\] { font-size: 0.72rem !important; }
+html.font-large  .text-\[12px\],
+html.font-xlarge .text-\[12px\] { font-size: 0.78rem !important; }
+
+html.font-large  .text-xs,
+html.font-xlarge .text-xs  { font-size: 0.75rem  !important; }
+html.font-large  .text-sm,
+html.font-xlarge .text-sm  { font-size: 0.875rem !important; }
+html.font-large  .text-base,
+html.font-xlarge .text-base { font-size: 1rem    !important; }
+html.font-large  .text-lg,
+html.font-xlarge .text-lg  { font-size: 1.125rem !important; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+@keyframes shrink {
+  from { width: 100%; }
+  to   { width: 0%;   }
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

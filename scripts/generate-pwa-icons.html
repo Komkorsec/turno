@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+  ── Generatore Icone PWA Turno ─────────────────────────────────────────────
+  Apri in un browser. Clicca i 3 pulsanti "Scarica" uno alla volta.
+  Sposta i file scaricati in:  turno/public/icons/
+  ──────────────────────────────────────────────────────────────────────────
+-->
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Genera Icone PWA — Turno</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f0f4f8;
+           display: flex; align-items: center; justify-content: center;
+           min-height: 100vh; margin: 0; padding: 16px; }
+    .card { background: white; border-radius: 16px; padding: 32px;
+            box-shadow: 0 4px 24px rgba(0,0,0,.1); max-width: 520px; width: 100%; }
+    h1 { color: #1e3a5f; font-size: 1.2rem; margin: 0 0 6px; }
+    .subtitle { color: #718096; font-size: .85rem; margin: 0 0 24px; line-height: 1.5; }
+    .icon-row { display: flex; align-items: center; gap: 16px;
+                border: 1px solid #e2e8f0; border-radius: 12px;
+                padding: 14px 16px; margin-bottom: 10px; }
+    canvas { border-radius: 10px; flex-shrink: 0; }
+    .info { flex: 1; min-width: 0; }
+    .info strong { display: block; color: #1a202c; font-size: .9rem; }
+    .info span { color: #a0aec0; font-size: .78rem; }
+    button.dl { background: #1e3a5f; color: white; border: none;
+                border-radius: 8px; padding: 8px 16px; font-size: .82rem;
+                font-weight: 600; cursor: pointer; white-space: nowrap;
+                transition: background .2s; flex-shrink: 0; }
+    button.dl:hover { background: #2d5282; }
+    button.dl.done { background: #38a169; }
+    .note { background: #f8f9fa; border-radius: 8px; padding: 12px 14px;
+            font-size: .8rem; color: #4a5568; margin-top: 16px; line-height: 1.7; }
+    code { background: #edf2f7; padding: 1px 5px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>🎨 Genera Icone PWA — Turno</h1>
+  <p class="subtitle">Clicca <strong>Scarica</strong> su ognuna delle 3 icone,
+     poi sposta i file in <code>public/icons/</code>.</p>
+
+  <div id="rows"></div>
+
+  <div class="note">
+    <strong>Passi successivi:</strong><br>
+    1. Scarica tutte e 3 le icone (un click alla volta)<br>
+    2. Sposta i file in <code>turno/public/icons/</code><br>
+    3. Ricompila: <code>npm run build</code>
+  </div>
+</div>
+
+<script>
+const SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#1e3a5f"/>
+  <g transform="translate(103, 109) scale(6.396)">
+    <path fill="#ffffff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+  </g>
+</svg>`
+
+const ICONS = [
+  { size: 192,  filename: 'icon-192.png',         label: 'icon-192.png',         desc: '192×192 · Android manifest' },
+  { size: 512,  filename: 'icon-512.png',         label: 'icon-512.png',         desc: '512×512 · Android splash + manifest' },
+  { size: 180,  filename: 'apple-touch-icon.png', label: 'apple-touch-icon.png', desc: '180×180 · iPhone home screen' },
+]
+
+function svgToCanvas(size) {
+  return new Promise(resolve => {
+    const canvas = document.createElement('canvas')
+    canvas.width = canvas.height = size
+    const img = new Image()
+    const blob = new Blob([SVG], { type: 'image/svg+xml' })
+    const url = URL.createObjectURL(blob)
+    img.onload = () => {
+      canvas.getContext('2d').drawImage(img, 0, 0, size, size)
+      URL.revokeObjectURL(url)
+      resolve(canvas)
+    }
+    img.src = url
+  })
+}
+
+async function init() {
+  const container = document.getElementById('rows')
+  for (const icon of ICONS) {
+    const canvas = await svgToCanvas(icon.size)
+    const preview = document.createElement('canvas')
+    const px = 56
+    preview.width = preview.height = px
+    preview.style.width = preview.style.height = px + 'px'
+    preview.style.borderRadius = '10px'
+    preview.getContext('2d').drawImage(canvas, 0, 0, px, px)
+
+    const row = document.createElement('div')
+    row.className = 'icon-row'
+
+    const btn = document.createElement('button')
+    btn.className = 'dl'
+    btn.textContent = 'Scarica'
+    btn.onclick = () => {
+      canvas.toBlob(blob => {
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = icon.filename
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        setTimeout(() => URL.revokeObjectURL(a.href), 200)
+        btn.textContent = '✓ Scaricato'
+        btn.className = 'dl done'
+      }, 'image/png')
+    }
+
+    const info = document.createElement('div')
+    info.className = 'info'
+    info.innerHTML = `<strong>${icon.label}</strong><span>${icon.desc}</span>`
+
+    row.appendChild(preview)
+    row.appendChild(info)
+    row.appendChild(btn)
+    container.appendChild(row)
+  }
+}
+
+init()
+</script>
+</body>
+</html>
