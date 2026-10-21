@@ -19,13 +19,14 @@ import SettingsPage from '../components/manager/SettingsPage'
 import AbsencesManagerPanel from '../components/manager/AbsencesManagerPanel'
 import TasksPanel, { fetchOpenTasksCount } from '../components/TasksPanel'
 import OrgDashboard from '../components/manager/OrgDashboard'
+import ArchivioGenerale from '../components/ArchivioGenerale'
 
 // ─── Costanti ────────────────────────────────────────────────────────────────
 
 const ADMIN_EMAIL  = 'umberto.vignati05@gmail.com'
 
 // Viste in cui lo swipe-right attiva il "back" gerarchico
-const SWIPE_BACK_VIEWS = new Set(['structure-menu', 'diaries', 'schedule', 'team', 'team-archive', 'residents', 'structure-info', 'settings', 'absences', 'codes', 'tasks', 'org-dashboard'])
+const SWIPE_BACK_VIEWS = new Set(['structure-menu', 'diaries', 'schedule', 'team', 'team-archive', 'residents', 'structure-info', 'settings', 'absences', 'codes', 'tasks', 'org-dashboard', 'archivio-generale'])
 const ROLE_LABELS  = { operator: 'Operatore', admin_secondary: 'Coordinatore', manager: 'Responsabile' }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -997,9 +998,9 @@ export default function ManagerDashboard({ onGoToAdmin }) {
           <img src={logo} alt="Turno" className="h-10 w-auto shrink-0 -ml-2" />
 
           {/* Strutture/impostazioni: testo semplice */}
-          {(view === 'structures' || view === 'settings' || view === 'absences' || view === 'codes' || view === 'tasks' || view === 'org-dashboard') ? (
+          {(view === 'structures' || view === 'settings' || view === 'absences' || view === 'codes' || view === 'tasks' || view === 'org-dashboard' || view === 'archivio-generale') ? (
             <p className="text-white font-bold text-sm truncate">
-              {view === 'settings' ? 'Impostazioni' : view === 'absences' ? 'Gestione Ferie' : view === 'codes' ? 'Generazione Codici Personale' : view === 'tasks' ? 'Bacheca Task' : view === 'org-dashboard' ? 'Panoramica' : (orgInfo?.name ?? 'Il tuo Workspace')}
+              {view === 'settings' ? 'Impostazioni' : view === 'absences' ? 'Gestione Ferie' : view === 'codes' ? 'Generazione Codici Personale' : view === 'tasks' ? 'Bacheca Task' : view === 'org-dashboard' ? 'Panoramica' : view === 'archivio-generale' ? 'Archivio Generale' : (orgInfo?.name ?? 'Il tuo Workspace')}
             </p>
           ) : (
             /* Sub-viste: nome struttura cliccabile con dropdown se 2+ strutture */
@@ -1862,6 +1863,29 @@ export default function ManagerDashboard({ onGoToAdmin }) {
                     onClick={() => openStructure(s)}
                   />
                 ))}
+
+                {/* Archivio Generale */}
+                <button
+                  type="button"
+                  onClick={() => setView('archivio-generale')}
+                  className="w-full bg-white rounded-2xl border border-[#e2e8f0] p-5 flex items-center gap-4
+                             active:bg-[#f0f4f8] transition-colors text-left shadow-sm
+                             hover:border-[#1e3a5f]/40 hover:shadow-md"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-[#eef2f7] flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-[#1e3a5f]" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-[#1a202c] text-base leading-tight">Archivio Generale</p>
+                    <p className="text-xs text-[#a0aec0] mt-0.5">Accreditamenti, autorizzazioni e documenti ente</p>
+                  </div>
+                  <svg className="w-4 h-4 text-[#a0aec0] shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
               </div>
             )}
           </>
@@ -1874,6 +1898,16 @@ export default function ManagerDashboard({ onGoToAdmin }) {
             orgInfo={orgInfo}
             profile={profile}
           />
+        )}
+
+        {/* ── Archivio Generale ── */}
+        {view === 'archivio-generale' && (
+          <div className="fixed inset-0 z-40">
+            <ArchivioGenerale
+              structures={structures}
+              onClose={() => setView('structures')}
+            />
+          </div>
         )}
 
         {/* ── Diari ── */}

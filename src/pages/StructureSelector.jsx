@@ -5,10 +5,12 @@ import logo from '../assets/logobianco2.svg'
 import AbsencesTab from '../components/AbsencesTab'
 import NotificationsPanel, { BellButton, fetchNotifications, subscribeNotifications } from '../components/NotificationsPanel'
 import OperatorSettingsPage from '../components/OperatorSettingsPage'
+import ArchivioGenerale from '../components/ArchivioGenerale'
 
 export default function StructureSelector() {
   const { profile, userStructures, setActiveStructure, signOut } = useAuth()
   const [activeTab, setActiveTab] = useState('strutture') // 'strutture' | 'ferie' | 'settings'
+  const [showArchivio, setShowArchivio] = useState(false)
 
   // ── Notifiche ──────────────────────────────────────────────────────────────
   const [notifications,  setNotifications]  = useState([])
@@ -165,6 +167,34 @@ export default function StructureSelector() {
                     </div>
                   </button>
                 ))}
+
+                {/* Archivio Generale — solo coordinator */}
+                {profile?.role === 'admin_secondary' && (
+                  <button
+                    type="button"
+                    onClick={() => setShowArchivio(true)}
+                    className="w-full bg-white rounded-2xl border border-[#e2e8f0] shadow-sm
+                               px-5 py-4 flex items-center gap-4 text-left
+                               hover:border-[#1e3a5f]/40 hover:shadow-md active:bg-[#f0f4f8]
+                               transition-all"
+                  >
+                    <div className="w-11 h-11 rounded-xl bg-[#eef2f7] flex items-center justify-center shrink-0">
+                      <svg className="w-5 h-5 text-[#1e3a5f]" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-[#1a202c] text-base leading-tight">Archivio Generale</p>
+                      <p className="text-xs text-[#a0aec0] mt-0.5">Accreditamenti, autorizzazioni e documenti ente</p>
+                    </div>
+                    <div className="w-8 h-8 rounded-xl bg-[#1e3a5f] flex items-center justify-center shrink-0">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
+                )}
               </div>
 
               <p className="text-center text-xs text-[#a0aec0] mt-8">
@@ -189,6 +219,16 @@ export default function StructureSelector() {
         )}
 
       </main>
+
+      {/* ── Archivio Generale overlay ── */}
+      {showArchivio && (
+        <div className="fixed inset-0 z-40">
+          <ArchivioGenerale
+            structures={userStructures}
+            onClose={() => setShowArchivio(false)}
+          />
+        </div>
+      )}
     </div>
   )
 }
