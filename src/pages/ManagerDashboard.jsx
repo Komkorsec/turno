@@ -270,6 +270,7 @@ export default function ManagerDashboard({ onGoToAdmin }) {
   const [teamCodes,           setTeamCodes]          = useState([])
   const [loadingTeam,         setLoadingTeam]        = useState(false)
   const [selectedRole,        setSelectedRole]       = useState('operator')
+  const [isSecretaryCode,     setIsSecretaryCode]    = useState(false)
   const [selectedStructureIds,setSelectedStructureIds] = useState([]) // strutture per operatore e coordinatore
   const [generatedCode,       setGeneratedCode]      = useState(null)
   const [generating,          setGenerating]         = useState(false)
@@ -699,7 +700,7 @@ export default function ManagerDashboard({ onGoToAdmin }) {
         ? [structures[0].id]
         : selectedStructureIds.map(Number)
 
-    if (targetStructureIds.length === 0) {
+    if (targetStructureIds.length === 0 && !isSecretaryCode) {
       setTeamError('Seleziona almeno una struttura.')
       setGenerating(false)
       return
@@ -715,6 +716,7 @@ export default function ManagerDashboard({ onGoToAdmin }) {
       created_by: session.user.id,
       is_used: false,
       structure_ids: targetStructureIds,
+      is_secretary: selectedRole === 'admin_secondary' ? isSecretaryCode : false,
     }
 
     const { error } = await supabase.from('invitation_codes').insert(payload)
@@ -1475,6 +1477,7 @@ export default function ManagerDashboard({ onGoToAdmin }) {
                     onClick={() => {
                       setSelectedRole(opt.value)
                       setSelectedStructureIds([])
+                      setIsSecretaryCode(false)
                       setGeneratedCode(null)
                       setTeamError(null)
                     }}
@@ -1488,8 +1491,26 @@ export default function ManagerDashboard({ onGoToAdmin }) {
                 ))}
               </div>
 
+              {/* Opzione segreteria — solo per coordinatore */}
+              {selectedRole === 'admin_secondary' && (
+                <label className={`flex items-center gap-3 rounded-xl border px-4 py-3 cursor-pointer transition-colors
+                  ${isSecretaryCode ? 'border-[#1e3a5f] bg-[#eef2f7]' : 'border-[#e2e8f0] bg-white'}`}>
+                  <input
+                    type="checkbox"
+                    checked={isSecretaryCode}
+                    onChange={e => setIsSecretaryCode(e.target.checked)}
+                    className="w-4 h-4 accent-[#1e3a5f]"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-[#1a202c]">Solo Archivio Generale</p>
+                    <p className="text-xs text-[#718096] mt-0.5">Accesso esclusivo ai documenti dell'ente (segreteria)</p>
+                  </div>
+                  <span className="text-lg shrink-0">🗂️</span>
+                </label>
+              )}
+
               {/* Strutture di destinazione — multi-checkbox per entrambi i ruoli */}
-              {structures.length > 1 && (
+              {structures.length > 1 && !isSecretaryCode && (
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-semibold text-[#718096] uppercase tracking-wide">
                     {selectedRole === 'admin_secondary' ? 'Strutture di accesso' : 'Strutture di destinazione'}

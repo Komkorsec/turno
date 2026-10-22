@@ -52,7 +52,10 @@
       "Bash(wc -l /c/Users/umber/turno/src/pages/*.jsx)",
       "Bash(wc -l /c/Users/umber/turno/src/components/*.jsx)",
       "Bash(npx eslint:*)",
-      "mcp__claude_ai_Turno_Supabase__list_migrations"
+      "mcp__claude_ai_Turno_Supabase__list_migrations",
+      "Bash(find /c/Users/umber/turno/src -type f \\\\\\(-name *.jsx -o -name *.js -o -name *.tsx -o -name *.ts \\\\\\))",
+      "Bash(find /c/Users/umber/turno/scripts -name \"*.sql\" -exec grep -l \"my_structure_id\\\\|my_organization_id\" {})",
+      "Bash(git add:*)"
     ]
   }
 }

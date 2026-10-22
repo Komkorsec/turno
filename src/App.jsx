@@ -10,6 +10,7 @@ import OperatorHome from './pages/OperatorHome'
 import ManagerDashboard from './pages/ManagerDashboard'
 import AdminDashboard from './pages/AdminDashboard'
 import StructureSelector from './pages/StructureSelector'
+import SecretaryHome from './pages/SecretaryHome'
 import logo from './assets/logobianco2.svg'
 
 const ADMIN_EMAIL = 'umberto.vignati05@gmail.com'
@@ -109,6 +110,10 @@ function AppRoutes() {
 
   if (profile.role === 'manager')
     return <ManagerDashboard onGoToAdmin={() => navigate('/admin')} />
+
+  // Segretaria: accesso diretto all'archivio generale
+  if (profile.role === 'admin_secondary' && profile.is_secretary)
+    return <SecretaryHome />
 
   // Operatore: nessuna struttura associata → pagina di attesa
   if (userStructures.length === 0 && !profile.structure_id)
